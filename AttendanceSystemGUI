@@ -1,0 +1,125 @@
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.event.*;
+
+public class AttendanceSystem {
+
+    JFrame frame;
+    JLabel lblName, lblTotal, lblAttended;
+    JTextField txtName, txtTotal, txtAttended;
+    JButton btnAdd, btnCheck;
+    JTable table;
+    DefaultTableModel model;
+
+    public AttendanceSystem() {
+        frame = new JFrame("Student Attendance System");
+
+        
+        lblName = new JLabel("Student Name:");
+        lblTotal = new JLabel("Total Classes:");
+        lblAttended = new JLabel("Classes Attended:");
+
+      
+        txtName = new JTextField();
+        txtTotal = new JTextField();
+        txtAttended = new JTextField();
+
+        
+        btnAdd = new JButton("Add Record");
+        btnCheck = new JButton("Check Eligibility");
+
+        
+        model = new DefaultTableModel();
+        table = new JTable(model);
+
+        model.addColumn("Name");
+        model.addColumn("Total");
+        model.addColumn("Attended");
+        model.addColumn("Percentage");
+
+        JScrollPane sp = new JScrollPane(table);
+
+      
+        lblName.setBounds(30, 30, 120, 25);
+        txtName.setBounds(160, 30, 150, 25);
+
+        lblTotal.setBounds(30, 70, 120, 25);
+        txtTotal.setBounds(160, 70, 150, 25);
+
+        lblAttended.setBounds(30, 110, 140, 25);
+        txtAttended.setBounds(160, 110, 150, 25);
+
+        btnAdd.setBounds(30, 160, 130, 30);
+        btnCheck.setBounds(180, 160, 160, 30);
+
+        sp.setBounds(30, 210, 400, 150);
+
+        
+        frame.add(lblName);
+        frame.add(txtName);
+        frame.add(lblTotal);
+        frame.add(txtTotal);
+        frame.add(lblAttended);
+        frame.add(txtAttended);
+        frame.add(btnAdd);
+        frame.add(btnCheck);
+        frame.add(sp);
+
+        
+        btnAdd.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    String name = txtName.getText();
+                    int total = Integer.parseInt(txtTotal.getText());
+                    int attended = Integer.parseInt(txtAttended.getText());
+
+                    double percentage = (attended * 100.0) / total;
+
+                    model.addRow(new Object[]{
+                            name, total, attended, String.format("%.2f", percentage) + "%"
+                    });
+
+                    
+                    txtName.setText("");
+                    txtTotal.setText("");
+                    txtAttended.setText("");
+
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(frame, "Please enter valid data!");
+                }
+            }
+        });
+
+        // Button Action: Check Eligibility
+        btnCheck.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int row = table.getSelectedRow();
+
+                if (row == -1) {
+                    JOptionPane.showMessageDialog(frame, "Select a student row first!");
+                    return;
+                }
+
+                double percentage = Double.parseDouble(
+                        model.getValueAt(row, 3).toString().replace("%", "")
+                );
+
+                if (percentage >= 75) {
+                    JOptionPane.showMessageDialog(frame, "Eligible for Exam ✅");
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Not Eligible ❌");
+                }
+            }
+        });
+
+      
+        frame.setSize(500, 420);
+        frame.setLayout(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        new AttendanceSystem();
+    }
+}
